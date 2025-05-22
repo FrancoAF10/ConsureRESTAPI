@@ -22,7 +22,9 @@ import org.json.JSONObject;
 
 public class Registrar extends AppCompatActivity {
     private final String URL="https://apirest-cine-production-cc0f.up.railway.app/api/peliculas/4";
-    RequestQueue requestQueue;
+    private final String URL_Local="http://192.168.101.20:3000/api/peliculas";//tiene que estar en ejecución
+
+    RequestQueue requestQueue;//cola de pedido
 
 
     Button RegistarPelicula, EliminaPelicula;
@@ -56,7 +58,7 @@ public class Registrar extends AppCompatActivity {
         //Paso 2:
         JsonObjectRequest jsonRequest= new JsonObjectRequest(
                 Request.Method.DELETE,
-                URL,
+                URL_Local,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -83,8 +85,8 @@ public class Registrar extends AppCompatActivity {
         JSONObject datos= new JSONObject();
         //Paso 1.2: La asignación debe ir en try catch
         try{
-            datos.put("titulo","Terminator 3");
-            datos.put("duracion",105);
+            datos.put("titulo","Terminator ");
+            datos.put("duracion",111);
             datos.put("clasificacion","+14");
             datos.put("alanzamiento","2009");
 
@@ -96,7 +98,7 @@ public class Registrar extends AppCompatActivity {
         //Paso 2:
         JsonObjectRequest jsonRequest= new JsonObjectRequest(
                 Request.Method.POST,
-                URL,
+                URL_Local,
                 datos,
                 new Response.Listener<JSONObject>() {
                     @Override

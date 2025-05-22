@@ -17,8 +17,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.consurerestapi.adaptadores.PeliculaAdapter;
+import com.example.consurerestapi.entidades.Pelicula;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class Listar extends AppCompatActivity {
 
@@ -50,14 +55,15 @@ public class Listar extends AppCompatActivity {
         requestQueue= Volley.newRequestQueue(this);
         //Paso 2: Preparación de la solicitud
         //Definir objeto: cadena, Json, array de json
+        //valor de retorno= [{},{},{}]
         JsonArrayRequest jsonRequest=new JsonArrayRequest(
                 Request.Method.GET,
-                URL,
+                URL_Local,
                 null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d("Peliculas",response.toString());
+                        procesarDatos(response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -70,6 +76,33 @@ public class Listar extends AppCompatActivity {
 
         //Paso 3: Envio de la solicitud por el canal de comunicación
         requestQueue.add(jsonRequest);
+    }
+
+    /**
+     * Renderizar los datos obtenidos REST API en ListView utilizando Adaptador personalizado
+     * */
+    private void procesarDatos(JSONArray response){
+        try{
+            Pelicula pelicula;
+            ArrayList<Pelicula>listaPeliculas= new ArrayList<>();
+
+            for(int i=0;i<response.length();i++){
+                JSONObject jsonObject=response.getJSONObject(i);
+
+                pelicula=new Pelicula();
+                pelicula.setId(jsonObject.getInt("id"));
+                pelicula.setTitulo(jsonObject.getString("titulo"));
+                pelicula.setDuracion(jsonObject.getInt("duracion"));
+                pelicula.setClasificacion(jsonObject.getString("clasificacion"));
+                pelicula.setAlanzamiento(jsonObject.getString("alanzamiento"));
+
+                listaPeliculas.add(pelicula);
+            }
+            PeliculaAdapter adapter = new PeliculaAdapter(this,listaPeliculas);
+            lstPeliculas.setAdapter(adapter);
+        }catch (Exception e){
+            Log.e("ERROR JSONARRAY",e.toString());
+        }
     }
     private void loadUI(){
         lstPeliculas=findViewById(R.id.lstPeliculas);
